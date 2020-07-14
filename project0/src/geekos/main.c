@@ -22,7 +22,34 @@
 #include <geekos/keyboard.h>
 
 
+void project0()
+{
+    Keycode keycode;
 
+    Print("Press Ctrl + d to exit!\n");
+    while (1)
+    {
+        if(Read_Key(&keycode))
+        {
+            if((keycode & KEY_SPECIAL_FLAG) || (keycode & KEY_RELEASE_FLAG))    //只输出非特殊字符
+            {
+                int asciiCode = keycode & 0xff; //获取低8位Ascii码
+
+                if((keycode & KEY_CTRL_FLAG) && asciiCode == 'd')
+                {
+                    Print("Exit project0\n");
+                    Exit(1);
+                }
+                else
+                {
+                    Print("%c", asciiCode);
+                }
+                
+            }
+        }
+    }
+    
+}
 
 /*
  * Kernel C code entry point.
@@ -48,9 +75,9 @@ void Main(struct Boot_Info* bootInfo)
     Set_Current_Attr(ATTRIB(BLACK, GRAY));
 
 
-    TODO("Start a kernel thread to echo pressed keys and print counts");
-
-
+    //TODO("Start a kernel thread to echo pressed keys and print counts");
+    struct kernel_Thread *thread;
+    thread = Start_Kernel_Thread(&project0, 0, PRIORITY_NORMAL, false);
 
     /* Now this thread is done. */
     Exit(0);
